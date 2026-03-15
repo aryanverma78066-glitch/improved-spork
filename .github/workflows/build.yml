@@ -1,4 +1,4 @@
-name: Build APk
+name: Build APK
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.buildozer
-        key: buildozer-${{ runner.os }}-v4
+        key: buildozer-${{ runner.os }}-v6
 
     - name: Install dependencies
       run: |
@@ -29,7 +29,7 @@ jobs:
           autoconf libtool pkg-config zlib1g-dev \
           libncurses5-dev libncursesw5-dev libtinfo5 \
           cmake libffi-dev libssl-dev automake
-        pip install --user --upgrade Cython==0.29.33 virtualenv
+        pip install --user "Cython<3.0" "setuptools<71.0.0" virtualenv
         pip install --user --upgrade buildozer
 
     - name: Build APK
