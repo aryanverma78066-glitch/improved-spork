@@ -1,19 +1,19 @@
 [app]
-title = MyGame
-package.name = mygame
-package.domain = org.mygame
+title = Colour Catching
+package.name = colourcatching
+package.domain = org.colourcatching
 source.dir = .
 source.include_exts = py,png,jpg,jpeg,ogg,mp3,wav,ttf,json,atlas
 version = 1.0
-requirements = python3==3.10.12,hostpython3==3.10.12,pygame
+requirements = python3==3.10.12,kivy==2.3.0,pyjnius==1.5.0,hostpython3==3.10.12,pygame
 orientation = portrait
 android.api = 33
 android.minapi = 21
-android.fullscreen = 0
 android.ndk = 25b
 android.accept_sdk_license = True
 android.permissions = WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
 android.wakelock = True
+android.archs = arm64-v8a
 p4a.bootstrap = sdl2
 
 [buildozer]
