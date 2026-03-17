@@ -2,7 +2,7 @@
 title = MyPygameGame
 package.name = mypygame
 package.domain = org.test
-source.dir = .
+source.dir = game_project
 source.include_exts = py,png,jpg,ttf,wav,mp3,json
 source.include_patterns = assets/*,images/*
 
