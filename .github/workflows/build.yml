@@ -11,7 +11,14 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          # Install current dependencies
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev wget
+          
+          # MANUALLY INSTALL libtinfo5 (Fixes your specific error)
+          wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
+          sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
+          
+          # Install Buildozer and Cython
           pip3 install --user --upgrade buildozer Cython==0.29.33 virtualenv
 
       - name: Unzip Project
@@ -19,14 +26,9 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Add local bin to path so buildozer command works
           export PATH=$PATH:~/.local/bin/
-          # Fix root/permission warning
           export BUILDOZER_WARN_ON_ROOT=0
-          # Accept Android SDK licenses automatically
-          export APP_ANDROID_ACCEPT_SDK_LICENSE=1
-          
-          # Run build directly on the runner
+          # This command builds the APK using your buildozer.spec
           buildozer android debug
 
       - name: Upload APK
