@@ -8,7 +8,7 @@ source.include_patterns = assets/*,images/*
 
 # CRITICAL: Fixes most Pygame Android crashes
 requirements = python3==3.10.12,pygame==2.5.2,sdl2_ttf,sdl2_image,sdl2_mixer,android
-
+version = 0.1
 orientation = landscape
 fullscreen = 1
 
