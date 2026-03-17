@@ -8,18 +8,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --user --upgrade buildozer Cython==0.29.33 virtualenv
+
       - name: Unzip Project
         run: unzip game_project.zip
 
       - name: Build with Buildozer
         run: |
-          # We use -u 1000 to run as a standard user instead of root
-          docker run --rm \
-            -u 1000 \
-            -v ${{ github.workspace }}:/home/user/hostpython \
-            -w /home/user/hostpython \
-            kivy/buildozer \
-            android debug
+          # Add local bin to path so buildozer command works
+          export PATH=$PATH:~/.local/bin/
+          # Fix root/permission warning
+          export BUILDOZER_WARN_ON_ROOT=0
+          # Accept Android SDK licenses automatically
+          export APP_ANDROID_ACCEPT_SDK_LICENSE=1
+          
+          # Run build directly on the runner
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
