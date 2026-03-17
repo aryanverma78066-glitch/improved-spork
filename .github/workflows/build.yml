@@ -6,21 +6,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: [actions/checkout@v4](https://github.com)
+        uses: actions/checkout@v4
 
-      - name: Unzip project
-        run: unzip game_project.zip
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Unzip and Fix Permissions
+        run: |
+          unzip game_project.zip
+          chmod -R 777 game_project
+          # Ensure buildozer.spec is where the action expects it
+          # If it's in the root, leave it. If it's in the zip, move it.
 
       - name: Build with Buildozer
-        uses: [ArtemSBulgakov/buildozer-action@v1](https://github.com/marketplace/actions/buildozer-action)
+        uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
-          # Do NOT set workdir if buildozer.spec is in the root
-          buildozer_version: stable
+          # This tells the action to run in the root where your .spec is
+          workdir: .
 
       - name: Upload APK
-        uses: [actions/upload-artifact@v4](https://github.com)
+        uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: my-game-apk
           path: bin/*.apk
