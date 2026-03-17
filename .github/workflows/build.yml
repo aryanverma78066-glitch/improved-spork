@@ -1,21 +1,26 @@
-name: Build APK
+name: Build Android APK
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: [actions/checkout@v4](https://github.com)
+
+      - name: Unzip project
+        run: unzip game_project.zip
 
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+        uses: [ArtemSBulgakov/buildozer-action@v1](https://github.com/marketplace/actions/buildozer-action)
         id: buildozer
         with:
           command: buildozer android debug
-          buildozer_version: master
+          # Do NOT set workdir if buildozer.spec is in the root
+          buildozer_version: stable
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: [actions/upload-artifact@v4](https://github.com)
         with:
-          name: my-game-apk
+          name: package
           path: bin/*.apk
