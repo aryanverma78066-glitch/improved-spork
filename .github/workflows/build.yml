@@ -8,22 +8,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Unzip and Setup
-        run: |
-          unzip game_project.zip
-          # No need for chmod here, the docker container handles it differently
+      - name: Unzip Project
+        run: unzip game_project.zip
 
-      - name: Build with Buildozer (Manual Docker)
-        # We use the raw buildozer image to avoid the "user" permission bug
+      - name: Build with Buildozer
         run: |
+          # We use -u 1000 to run as a standard user instead of root
           docker run --rm \
+            -u 1000 \
             -v ${{ github.workspace }}:/home/user/hostpython \
+            -w /home/user/hostpython \
             kivy/buildozer \
             android debug
-            
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: game-apk
-          # Buildozer puts the APK in the bin/ folder of the root
           path: bin/*.apk
