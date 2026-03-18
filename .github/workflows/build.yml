@@ -1,38 +1,45 @@
-name: Build Android APK
-on: [push, pull_request]
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          sudo apt update
-          # Install current dependencies
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev wget
-          
-          # MANUALLY INSTALL libtinfo5 (Fixes your specific error)
-          wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
-          sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
-          
-          # Install Buildozer and Cython
-          pip3 install --user --upgrade buildozer Cython==0.29.33 virtualenv
+    - name: Extract game files
+      run: |
+        unzip game_project.zip
+        cp -r game_project/* .
 
-      - name: Unzip Project
-        run: unzip game_project.zip
+    - name: Cache buildozer
+      uses: actions/cache@v4
+      with:
+        path: ~/.buildozer
+        key: buildozer-${{ runner.os }}-v2
 
-      - name: Build with Buildozer
-        run: |
-          export PATH=$PATH:~/.local/bin/
-          export BUILDOZER_WARN_ON_ROOT=0
-          # This command builds the APK using your buildozer.spec
-          buildozer android debug
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip python3-pip \
+          autoconf libtool pkg-config zlib1g-dev \
+          libncurses5-dev libncursesw5-dev libtinfo5 \
+          cmake libffi-dev libssl-dev automake
+        pip install --user --upgrade Cython==0.29.33 virtualenv
+        pip install --user --upgrade buildozer
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: game-apk
-          path: bin/*.apk
+    - name: Build APK
+      run: |
+        export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
+        export PATH=$JAVA_HOME/bin:$PATH
+        buildozer android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: game-apk
+        path: bin/*.apk
